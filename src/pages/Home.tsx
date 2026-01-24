@@ -401,7 +401,7 @@ export default function HomePage() {
                             <Button
                                 variant="outline"
                                 onClick={() => navigate('/auth')}
-                                className="border-white/30 text-white hover:bg-white/10 rounded-full px-8 py-3"
+                                className="border-white/30 text-brand-green hover:bg-white/10 rounded-full px-8 py-3"
                             >
                                 Become a Provider
                             </Button>
