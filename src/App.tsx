@@ -11,6 +11,8 @@ import AuthPage from './pages/Auth';
 
 import BookingsPage from './pages/Bookings';
 import ProfilePage from './pages/Profile';
+import { useEffect } from 'react';
+import { useAuthStore } from './store/useAuthStore';
 
 function Layout() {
   return (
@@ -24,7 +26,15 @@ function Layout() {
   );
 }
 
+
+
 function App() {
+  const { initialize } = useAuthStore();
+
+  useEffect(() => {
+    initialize();
+  }, [initialize]);
+
   return (
     <Router>
       <Routes>
