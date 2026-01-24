@@ -1,11 +1,19 @@
 @import "tailwindcss";
 
-@layer base {
-  :root {
-    --brand-green: #047047;
-    --brand-accent: #bb9146;
-  }
+@theme {
+  --color-brand-green: #047047;
+  --color-brand-accent: #bb9146;
+  --color-brand-dark: #024d31;
+  --color-brand-light: #e6f4ef;
+  
+  --color-brand-gold: #bb9146;
+  --color-brand-gold-light: #fdf3e3;
+  --color-brand-gold-dark: #8f6e33;
 
+  --font-sans: Inter, Roboto, sans-serif;
+}
+
+@layer base {
   html {
     -webkit-tap-highlight-color: transparent;
   }
