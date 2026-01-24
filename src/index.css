@@ -1,0 +1,27 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --brand-green: #047047;
+    --brand-accent: #bb9146;
+  }
+
+  html {
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  body {
+    font-family: 'Inter', sans-serif;
+    color: #111827; /* text-gray-900 */
+    background-color: #f9fafb; /* bg-gray-50 */
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+}
+
+/* Mobile optimizations */
+.safe-area-bottom {
+  padding-bottom: env(safe-area-inset-bottom);
+}
