@@ -1,209 +1,412 @@
+import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import {
     Search, MapPin, Star, Wrench, Zap, Sparkles,
-    Truck, BookOpen, Bell, ChevronRight, ShieldCheck, Heart
+    Truck, BookOpen, Heart, Clock, ChevronRight,
+    Briefcase, Building2, ShieldCheck
 } from 'lucide-react';
+import { Button } from '../components/ui/Button';
 import { Card, CardContent } from '../components/ui/Card';
 import { Input } from '../components/ui/Input';
 
-
 // --- Mock Data ---
 const CATEGORIES = [
-    { id: '1', name: 'Plumbing', icon: Wrench, color: 'bg-blue-50 text-blue-600' },
-    { id: '2', name: 'Electrical', icon: Zap, color: 'bg-amber-50 text-amber-600' },
-    { id: '3', name: 'Cleaning', icon: Sparkles, color: 'bg-purple-50 text-purple-600' },
-    { id: '4', name: 'Beauty', icon: Heart, color: 'bg-rose-50 text-rose-600' },
-    { id: '5', name: 'Moving', icon: Truck, color: 'bg-emerald-50 text-emerald-600' },
-    { id: '6', name: 'Tutoring', icon: BookOpen, color: 'bg-indigo-50 text-indigo-600' },
+    { id: '1', name: 'Plumbing', icon: Wrench, openings: 12, color: 'text-blue-600' },
+    { id: '2', name: 'Electrical', icon: Zap, openings: 8, color: 'text-amber-600' },
+    { id: '3', name: 'Cleaning', icon: Sparkles, openings: 15, color: 'text-purple-600' },
+    { id: '4', name: 'Beauty & Spa', icon: Heart, openings: 6, color: 'text-rose-600' },
+    { id: '5', name: 'Moving', icon: Truck, openings: 4, color: 'text-emerald-600' },
+    { id: '6', name: 'Tutoring', icon: BookOpen, openings: 9, color: 'text-indigo-600' },
+    { id: '7', name: 'Handyman', icon: Briefcase, openings: 11, color: 'text-orange-600' },
 ];
 
-const POPULAR_SERVICES = [
-    { id: '101', title: 'Home Cleaning', price: 'Ksh 1,500', image: 'https://images.unsplash.com/photo-1581578731117-104f2a8060a7?w=500&q=80' },
-    { id: '102', title: 'Sofa Repair', price: 'Ksh 2,000', image: 'https://images.unsplash.com/photo-1556228453-efd6c1ff04f6?w=500&q=80' },
-    { id: '103', title: 'Laptop Fix', price: 'Ksh 1,000', image: 'https://images.unsplash.com/photo-1593640408182-31c70c8268f5?w=500&q=80' },
+const FEATURED_SERVICES = [
+    {
+        id: '1',
+        type: 'Full-time',
+        postedAgo: '2 days ago',
+        title: 'Home Deep Cleaning',
+        priceRange: 'Ksh 2,500 - 4,000',
+        location: 'Westlands',
+        category: 'Cleaning',
+        providerImage: 'https://images.unsplash.com/photo-1581578731117-104f2a8060a7?w=100&q=80',
+        providerColor: 'bg-purple-100',
+    },
+    {
+        id: '2',
+        type: 'Contract',
+        postedAgo: '1 day ago',
+        title: 'Electrical Repairs',
+        priceRange: 'Ksh 1,500 - 3,000',
+        location: 'Kilimani',
+        category: 'Electrical',
+        providerImage: 'https://images.unsplash.com/photo-1621905251189-08b45d6a269e?w=100&q=80',
+        providerColor: 'bg-amber-100',
+    },
+    {
+        id: '3',
+        type: 'One-time',
+        postedAgo: '3 hours ago',
+        title: 'Plumbing Services',
+        priceRange: 'Ksh 1,000 - 2,500',
+        location: 'Karen',
+        category: 'Plumbing',
+        providerImage: 'https://images.unsplash.com/photo-1504328345606-18bbc8c9d7d1?w=100&q=80',
+        providerColor: 'bg-blue-100',
+    },
 ];
 
 const TOP_PROVIDERS = [
     {
         id: '1',
-        name: 'Brian Otieno',
-        role: 'Master Electrician',
+        name: 'CleanPro Services',
+        type: 'Full-time',
+        role: 'Home Cleaning',
+        location: 'Westlands, Nairobi',
         rating: 4.9,
-        reviews: 127,
-        rate: 'Ksh 500/hr',
-        location: 'Kilimani, Nairobi',
-        image: 'https://images.unsplash.com/photo-1633332755192-727a05c4013d?w=400&h=400&fit=crop',
-        verified: true,
+        logo: 'https://images.unsplash.com/photo-1560179707-f14e90ef3623?w=100&h=100&fit=crop',
+        bgColor: 'bg-emerald-50',
     },
     {
         id: '2',
-        name: 'Grace Wanjiku',
-        role: 'Professional Stylist',
+        name: 'TechFix Kenya',
+        type: 'Contract',
+        role: 'IT Support',
+        location: 'CBD, Nairobi',
         rating: 4.8,
-        reviews: 89,
-        rate: 'Ksh 800/cut',
-        location: 'Westlands, Nairobi',
-        image: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=400&h=400&fit=crop',
-        verified: true,
+        logo: 'https://images.unsplash.com/photo-1549924231-f129b911e442?w=100&h=100&fit=crop',
+        bgColor: 'bg-rose-50',
+    },
+    {
+        id: '3',
+        name: 'SparkElectric',
+        type: 'Full-time',
+        role: 'Electrical Work',
+        location: 'Kilimani, Nairobi',
+        rating: 4.7,
+        logo: 'https://images.unsplash.com/photo-1572021335469-31706a17ber7?w=100&h=100&fit=crop',
+        bgColor: 'bg-amber-50',
+    },
+    {
+        id: '4',
+        name: 'MoveIt Movers',
+        type: 'Contract',
+        role: 'Moving Services',
+        location: 'Industrial Area',
+        rating: 4.6,
+        logo: 'https://images.unsplash.com/photo-1600880292203-757bb62b4baf?w=100&h=100&fit=crop',
+        bgColor: 'bg-blue-50',
     },
 ];
 
 export default function HomePage() {
     const navigate = useNavigate();
+    const [activeTab, setActiveTab] = useState<'latest' | 'premium'>('latest');
+    const [searchQuery, setSearchQuery] = useState('');
+    const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
+
+    const handleSearch = () => {
+        navigate(`/search?q=${encodeURIComponent(searchQuery)}`);
+    };
 
     return (
-        <div className="min-h-screen bg-gray-50/50 pb-24 font-sans text-slate-900">
+        <div className="min-h-screen bg-gradient-to-b from-slate-50 to-white pb-24 font-sans text-slate-900">
 
-            {/* --- Header & Hero Section --- */}
-            <div className="relative bg-slate-900 text-white rounded-b-[2.5rem] overflow-hidden shadow-xl">
-                {/* Background Decor */}
-                <div className="absolute top-0 left-0 w-full h-full overflow-hidden opacity-10 pointer-events-none">
-                    <div className="absolute -top-10 -right-10 w-64 h-64 bg-emerald-500 rounded-full blur-3xl"></div>
-                    <div className="absolute top-20 -left-10 w-48 h-48 bg-blue-500 rounded-full blur-3xl"></div>
+            {/* --- Hero Section --- */}
+            <section className="relative bg-gradient-to-br from-slate-50 via-white to-emerald-50/30 pt-8 pb-16 px-4 sm:px-6 lg:px-8">
+                {/* Background decoration */}
+                <div className="absolute inset-0 overflow-hidden pointer-events-none">
+                    <div className="absolute top-20 right-10 w-72 h-72 bg-brand-green/5 rounded-full blur-3xl"></div>
+                    <div className="absolute bottom-10 left-10 w-56 h-56 bg-brand-gold/5 rounded-full blur-3xl"></div>
                 </div>
 
-                <div className="relative px-6 pt-12 pb-20">
-                    {/* Top Bar */}
-                    <div className="flex justify-between items-center mb-6">
-                        <div className="flex flex-col">
-                            <span className="text-slate-400 text-xs font-medium uppercase tracking-wider">Current Location</span>
-                            <div className="flex items-center text-emerald-400 font-semibold text-sm cursor-pointer">
-                                <MapPin className="h-4 w-4 mr-1" />
-                                Kilimani, Nairobi
-                                <ChevronRight className="h-4 w-4 ml-1 opacity-70" />
-                            </div>
-                        </div>
-                        <div className="p-2 bg-white/10 rounded-full backdrop-blur-md border border-white/5 cursor-pointer hover:bg-white/20 transition">
-                            <Bell className="h-5 w-5 text-white" />
-                            <span className="absolute top-2 right-2 h-2.5 w-2.5 bg-red-500 rounded-full border-2 border-slate-900"></span>
-                        </div>
-                    </div>
-
+                <div className="relative max-w-4xl mx-auto text-center">
                     {/* Headline */}
-                    <h1 className="text-3xl font-bold leading-tight mb-2">
-                        Find the perfect <br />
-                        <span className="text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 to-teal-200">
-                            Fundi for the job.
+                    <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold text-slate-900 leading-tight mb-4">
+                        Find the perfect{' '}
+                        <span className="relative inline-block">
+                            <span className="relative z-10 text-brand-green">Fundi for the job</span>
+                            <span className="absolute bottom-1 left-0 w-full h-3 bg-brand-green/20 -skew-x-3 rounded"></span>
                         </span>
+                        {' '}in Nairobi
                     </h1>
-                    <p className="text-slate-400 text-sm mb-4">Plumbers, Electricians, Cleaners & more.</p>
-                </div>
-            </div>
+                    <p className="text-slate-500 text-base sm:text-lg max-w-2xl mx-auto mb-8">
+                        Connect with skilled professionals for all your home and business needs.
+                        Plumbers, electricians, cleaners, and more at your fingertips.
+                    </p>
 
-            {/* --- Floating Search Bar --- */}
-            <div className="px-6 -mt-7 relative z-10">
-                <div
-                    className="bg-white p-2 rounded-2xl shadow-[0_8px_30px_rgb(0,0,0,0.08)] flex items-center border border-gray-100"
-                    onClick={() => navigate('/search')}
-                >
-                    <div className="pl-3">
-                        <Search className="h-5 w-5 text-emerald-600" />
-                    </div>
-                    <Input
-                        placeholder="What service do you need?"
-                        className="border-0 focus-visible:ring-0 text-base placeholder:text-gray-400 h-10"
-                        readOnly
-                    />
-                    <div className="bg-emerald-600 p-2.5 rounded-xl text-white shadow-md active:scale-95 transition-transform">
-                        <ChevronRight className="h-5 w-5" />
-                    </div>
-                </div>
-            </div>
-
-            {/* --- Categories Grid --- */}
-            <section className="mt-8 px-6">
-                <div className="flex items-center justify-between mb-4">
-                    <h2 className="text-lg font-bold text-slate-900">Categories</h2>
-                    <span className="text-xs font-semibold text-emerald-600 cursor-pointer">View All</span>
-                </div>
-                <div className="grid grid-cols-3 gap-3">
-                    {CATEGORIES.map((cat) => (
-                        <div
-                            key={cat.id}
-                            className="group flex flex-col items-center justify-center p-3 bg-white rounded-2xl border border-gray-100 shadow-sm transition-all hover:shadow-md hover:border-emerald-100 active:scale-95 cursor-pointer"
-                            onClick={() => navigate(`/search?category=${cat.name}`)}
-                        >
-                            <div className={`p-3 rounded-full mb-2 transition-colors group-hover:bg-emerald-100 ${cat.color} bg-opacity-20`}>
-                                <cat.icon className="h-6 w-6" />
-                            </div>
-                            <span className="text-xs font-medium text-slate-700">{cat.name}</span>
+                    {/* Search Bar */}
+                    <div className="bg-white p-2 sm:p-3 rounded-full shadow-lg shadow-slate-200/60 border border-slate-100 flex items-center gap-2 max-w-2xl mx-auto">
+                        <div className="flex items-center flex-1 pl-3 sm:pl-4">
+                            <Search className="h-5 w-5 text-slate-400 shrink-0" />
+                            <Input
+                                type="text"
+                                placeholder="Service or keyword..."
+                                value={searchQuery}
+                                onChange={(e) => setSearchQuery(e.target.value)}
+                                onKeyDown={(e) => e.key === 'Enter' && handleSearch()}
+                                className="border-0 focus-visible:ring-0 text-sm sm:text-base placeholder:text-slate-400 h-10 bg-transparent"
+                            />
                         </div>
-                    ))}
+                        <div className="hidden sm:flex items-center gap-2 px-4 border-l border-slate-200">
+                            <MapPin className="h-4 w-4 text-slate-400" />
+                            <span className="text-sm text-slate-600">Nairobi</span>
+                        </div>
+                        <Button
+                            onClick={handleSearch}
+                            className="rounded-full h-10 px-6 bg-brand-green hover:bg-brand-dark text-white shadow-md"
+                        >
+                            Search
+                        </Button>
+                    </div>
                 </div>
             </section>
 
-            {/* --- Trending / Horizontal Scroll (New Feature) --- */}
-            <section className="mt-8">
-                <div className="px-6 mb-4">
-                    <h2 className="text-lg font-bold text-slate-900">Trending in Nairobi</h2>
-                </div>
-                <div className="flex overflow-x-auto px-6 gap-4 pb-4 no-scrollbar snap-x">
-                    {POPULAR_SERVICES.map((service) => (
-                        <div key={service.id} className="min-w-[160px] snap-center">
-                            <div className="relative h-24 rounded-t-2xl overflow-hidden">
-                                <img src={service.image} alt={service.title} className="w-full h-full object-cover" />
-                                <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent"></div>
-                                <span className="absolute bottom-2 left-3 text-white text-xs font-bold bg-black/30 backdrop-blur-sm px-2 py-0.5 rounded-lg">
-                                    {service.price}
-                                </span>
-                            </div>
-                            <div className="bg-white p-3 rounded-b-2xl border-x border-b border-gray-100 shadow-sm">
-                                <h3 className="text-sm font-semibold text-slate-800">{service.title}</h3>
-                                <p className="text-xs text-slate-500 mt-1">Book Now</p>
+            {/* --- Recommended Services Section --- */}
+            <section className="px-4 sm:px-6 lg:px-8 py-10">
+                <div className="max-w-6xl mx-auto">
+                    {/* Section Header */}
+                    <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
+                        <div>
+                            <h2 className="text-xl sm:text-2xl font-bold text-slate-900">Recommended Services</h2>
+                            <p className="text-sm text-slate-500 mt-1">Explore suggested service providers</p>
+                        </div>
+                        <div className="flex items-center gap-2">
+                            <button
+                                onClick={() => setActiveTab('latest')}
+                                className={`px-4 py-2 text-sm font-medium rounded-full transition-colors ${activeTab === 'latest'
+                                        ? 'bg-brand-green text-white shadow-sm'
+                                        : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
+                                    }`}
+                            >
+                                Latest
+                            </button>
+                            <button
+                                onClick={() => setActiveTab('premium')}
+                                className={`px-4 py-2 text-sm font-medium rounded-full transition-colors ${activeTab === 'premium'
+                                        ? 'bg-brand-green text-white shadow-sm'
+                                        : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
+                                    }`}
+                            >
+                                Premium
+                            </button>
+                        </div>
+                    </div>
+
+                    {/* Two Column Layout */}
+                    <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
+                        {/* Categories Sidebar */}
+                        <div className="lg:col-span-4">
+                            <div className="bg-white rounded-2xl border border-slate-100 shadow-sm p-5">
+                                <h3 className="font-semibold text-slate-900 mb-4">Service Categories</h3>
+                                <div className="space-y-1">
+                                    {CATEGORIES.map((category) => (
+                                        <button
+                                            key={category.id}
+                                            onClick={() => {
+                                                setSelectedCategory(selectedCategory === category.id ? null : category.id);
+                                                navigate(`/search?category=${category.name}`);
+                                            }}
+                                            className={`w-full flex items-center justify-between p-3 rounded-xl transition-all ${selectedCategory === category.id
+                                                    ? 'bg-brand-light border border-brand-green/20'
+                                                    : 'hover:bg-slate-50'
+                                                }`}
+                                        >
+                                            <div className="flex items-center gap-3">
+                                                <category.icon className={`h-5 w-5 ${category.color}`} />
+                                                <span className="text-sm font-medium text-slate-700">{category.name}</span>
+                                            </div>
+                                            <span className="text-xs text-slate-400 bg-slate-100 px-2 py-1 rounded-full">
+                                                {category.openings} Open
+                                            </span>
+                                        </button>
+                                    ))}
+                                </div>
                             </div>
                         </div>
-                    ))}
+
+                        {/* Service Cards */}
+                        <div className="lg:col-span-8 space-y-4">
+                            {FEATURED_SERVICES.map((service) => (
+                                <Card
+                                    key={service.id}
+                                    className="border border-slate-100 shadow-sm hover:shadow-md hover:border-slate-200 transition-all cursor-pointer rounded-2xl overflow-hidden"
+                                    onClick={() => navigate(`/search?q=${service.title}`)}
+                                >
+                                    <CardContent className="p-5">
+                                        <div className="flex gap-4">
+                                            {/* Provider Image */}
+                                            <div className={`shrink-0 w-14 h-14 rounded-xl ${service.providerColor} flex items-center justify-center overflow-hidden`}>
+                                                <img
+                                                    src={service.providerImage}
+                                                    alt={service.title}
+                                                    className="w-full h-full object-cover"
+                                                />
+                                            </div>
+
+                                            {/* Content */}
+                                            <div className="flex-1 min-w-0">
+                                                <div className="flex items-center gap-2 mb-2">
+                                                    <span className="text-xs font-medium text-slate-500">
+                                                        Type: <span className="text-slate-700">{service.type}</span>
+                                                    </span>
+                                                    <span className="text-slate-300">•</span>
+                                                    <span className="text-xs text-slate-400 flex items-center gap-1">
+                                                        <Clock className="h-3 w-3" />
+                                                        {service.postedAgo}
+                                                    </span>
+                                                </div>
+
+                                                <h3 className="font-semibold text-slate-900 mb-1">{service.title}</h3>
+                                                <p className="text-sm text-slate-500 mb-3">{service.priceRange}</p>
+
+                                                <div className="flex items-center justify-between">
+                                                    <div className="flex items-center gap-3">
+                                                        <span className="inline-flex items-center gap-1 text-xs text-slate-500 bg-slate-100 px-2 py-1 rounded-full">
+                                                            <MapPin className="h-3 w-3" />
+                                                            {service.location}
+                                                        </span>
+                                                        <span className="inline-flex items-center gap-1 text-xs text-brand-green bg-brand-light px-2 py-1 rounded-full">
+                                                            {service.category}
+                                                        </span>
+                                                    </div>
+                                                    <Button
+                                                        size="sm"
+                                                        variant="outline"
+                                                        className="rounded-full text-xs border-brand-green text-brand-green hover:bg-brand-light"
+                                                    >
+                                                        Book Now
+                                                    </Button>
+                                                </div>
+                                            </div>
+
+                                            {/* Heart Icon */}
+                                            <button className="shrink-0 p-2 hover:bg-slate-50 rounded-full self-start transition-colors">
+                                                <Heart className="h-5 w-5 text-slate-300 hover:text-rose-400" />
+                                            </button>
+                                        </div>
+                                    </CardContent>
+                                </Card>
+                            ))}
+                        </div>
+                    </div>
                 </div>
             </section>
 
-            {/* --- Top Professionals --- */}
-            <section className="mt-4 px-6">
-                <h2 className="text-lg font-bold text-slate-900 mb-4">Top Rated "Kazi" Pros</h2>
-                <div className="space-y-4">
-                    {TOP_PROVIDERS.map((provider) => (
-                        <Card
-                            key={provider.id}
-                            className="border border-gray-100 shadow-sm hover:shadow-md transition-shadow cursor-pointer rounded-2xl overflow-hidden"
-                            onClick={() => navigate(`/provider/${provider.id}`)}
-                        >
-                            <CardContent className="p-4 flex gap-4">
-                                {/* Image Section */}
-                                <div className="relative">
-                                    <img
-                                        src={provider.image}
-                                        alt={provider.name}
-                                        className="h-20 w-20 rounded-xl object-cover"
-                                    />
-                                    {provider.verified && (
-                                        <div className="absolute -bottom-2 -right-2 bg-white p-1 rounded-full">
-                                            <ShieldCheck className="h-5 w-5 text-blue-500 fill-blue-50" />
-                                        </div>
-                                    )}
-                                </div>
+            {/* --- Top Providers Section --- */}
+            <section className="px-4 sm:px-6 lg:px-8 py-10 bg-slate-50/50">
+                <div className="max-w-6xl mx-auto">
+                    {/* Section Header */}
+                    <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
+                        <div>
+                            <h2 className="text-xl sm:text-2xl font-bold text-slate-900">Top Providers</h2>
+                            <p className="text-sm text-slate-500 mt-1">Find trusted professionals for quality services</p>
+                        </div>
+                        <div className="flex items-center gap-3">
+                            <Button
+                                onClick={() => navigate('/search')}
+                                className="rounded-full bg-brand-green hover:bg-brand-dark text-white"
+                            >
+                                Browse All
+                            </Button>
+                            <button
+                                onClick={() => navigate('/search')}
+                                className="text-sm font-medium text-slate-600 hover:text-brand-green transition-colors flex items-center gap-1"
+                            >
+                                See All
+                                <ChevronRight className="h-4 w-4" />
+                            </button>
+                        </div>
+                    </div>
 
-                                {/* Details Section */}
-                                <div className="flex-1">
-                                    <div className="flex justify-between items-start">
-                                        <div>
-                                            <h3 className="font-bold text-slate-900 text-base">{provider.name}</h3>
-                                            <p className="text-sm text-slate-500 font-medium">{provider.role}</p>
-                                        </div>
-                                        <div className="flex items-center bg-emerald-50 px-2 py-1 rounded-lg border border-emerald-100">
-                                            <Star className="h-3.5 w-3.5 text-emerald-600 fill-emerald-600 mr-1" />
-                                            <span className="text-xs font-bold text-emerald-800">{provider.rating}</span>
-                                        </div>
+                    {/* Provider Cards Grid */}
+                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                        {TOP_PROVIDERS.map((provider) => (
+                            <Card
+                                key={provider.id}
+                                className="border border-slate-100 shadow-sm hover:shadow-md hover:border-slate-200 transition-all cursor-pointer rounded-2xl overflow-hidden group"
+                                onClick={() => navigate(`/provider/${provider.id}`)}
+                            >
+                                <CardContent className="p-5">
+                                    {/* Type Badge */}
+                                    <div className="flex items-center justify-between mb-4">
+                                        <span className={`text-xs font-medium px-3 py-1 rounded-full ${provider.type === 'Full-time'
+                                                ? 'bg-emerald-100 text-emerald-700'
+                                                : 'bg-amber-100 text-amber-700'
+                                            }`}>
+                                            {provider.type}
+                                        </span>
+                                        <button className="p-1.5 hover:bg-slate-100 rounded-full transition-colors">
+                                            <Heart className="h-4 w-4 text-slate-300 group-hover:text-rose-400" />
+                                        </button>
                                     </div>
 
-                                    <div className="mt-3 flex items-center justify-between">
-                                        <div className="text-xs text-slate-400">
-                                            <span className="font-medium text-slate-700">{provider.reviews}</span> reviews
-                                        </div>
-                                        <span className="text-sm font-bold text-slate-900">{provider.rate}</span>
+                                    {/* Logo */}
+                                    <div className={`w-16 h-16 ${provider.bgColor} rounded-2xl flex items-center justify-center mb-4 mx-auto overflow-hidden`}>
+                                        <Building2 className="h-8 w-8 text-slate-400" />
                                     </div>
-                                </div>
-                            </CardContent>
-                        </Card>
-                    ))}
+
+                                    {/* Info */}
+                                    <h3 className="font-semibold text-slate-900 text-center mb-1">{provider.name}</h3>
+                                    <p className="text-sm text-slate-500 text-center mb-2">{provider.role}</p>
+
+                                    <div className="flex items-center justify-center gap-1 text-xs text-slate-400 mb-3">
+                                        <MapPin className="h-3 w-3" />
+                                        {provider.location}
+                                    </div>
+
+                                    {/* Rating */}
+                                    <div className="flex items-center justify-center gap-1">
+                                        {[...Array(5)].map((_, i) => (
+                                            <Star
+                                                key={i}
+                                                className={`h-4 w-4 ${i < Math.floor(provider.rating)
+                                                        ? 'text-amber-400 fill-amber-400'
+                                                        : 'text-slate-200'
+                                                    }`}
+                                            />
+                                        ))}
+                                        <span className="text-xs text-slate-500 ml-1">{provider.rating}</span>
+                                    </div>
+
+                                    {/* Verified Badge */}
+                                    <div className="flex items-center justify-center gap-1 mt-3 text-xs text-brand-green">
+                                        <ShieldCheck className="h-4 w-4" />
+                                        <span>Verified</span>
+                                    </div>
+                                </CardContent>
+                            </Card>
+                        ))}
+                    </div>
+                </div>
+            </section>
+
+            {/* --- CTA Section --- */}
+            <section className="px-4 sm:px-6 lg:px-8 py-16">
+                <div className="max-w-4xl mx-auto text-center">
+                    <div className="bg-gradient-to-br from-brand-green to-emerald-700 rounded-3xl p-8 sm:p-12 shadow-xl shadow-brand-green/20">
+                        <h2 className="text-2xl sm:text-3xl font-bold text-white mb-4">
+                            Ready to find your perfect Fundi?
+                        </h2>
+                        <p className="text-emerald-100 mb-6 max-w-xl mx-auto">
+                            Join thousands of satisfied customers who have found reliable professionals through JuaGig.
+                        </p>
+                        <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
+                            <Button
+                                onClick={() => navigate('/search')}
+                                className="bg-white text-brand-green hover:bg-slate-100 rounded-full px-8 py-3 font-semibold shadow-lg"
+                            >
+                                Find Services
+                            </Button>
+                            <Button
+                                variant="outline"
+                                onClick={() => navigate('/auth')}
+                                className="border-white/30 text-white hover:bg-white/10 rounded-full px-8 py-3"
+                            >
+                                Become a Provider
+                            </Button>
+                        </div>
+                    </div>
                 </div>
             </section>
         </div>
