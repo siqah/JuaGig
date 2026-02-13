@@ -1,103 +1,19 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import {
-    Search, MapPin, Star, Wrench, Zap, Sparkles,
-    Truck, BookOpen, Heart, Clock, ChevronRight,
-    Briefcase, Building2, ShieldCheck
+    Search, MapPin, Star, Heart, Clock, ChevronRight,
+    Building2, ShieldCheck
 } from 'lucide-react';
+
 import { Button } from '../components/ui/Button';
 import { Card, CardContent } from '../components/ui/Card';
 import { Input } from '../components/ui/Input';
 
+import { CATEGORIES } from '../data/categories';
+import { FEATURED_SERVICES } from '../data/services';
+import { TOP_PROVIDERS } from '../data/providers';
+
 // --- Mock Data ---
-const CATEGORIES = [
-    { id: '1', name: 'Plumbing', icon: Wrench, openings: 12, color: 'text-blue-600' },
-    { id: '2', name: 'Electrical', icon: Zap, openings: 8, color: 'text-amber-600' },
-    { id: '3', name: 'Cleaning', icon: Sparkles, openings: 15, color: 'text-purple-600' },
-    { id: '4', name: 'Beauty & Spa', icon: Heart, openings: 6, color: 'text-rose-600' },
-    { id: '5', name: 'Moving', icon: Truck, openings: 4, color: 'text-emerald-600' },
-    { id: '6', name: 'Tutoring', icon: BookOpen, openings: 9, color: 'text-indigo-600' },
-    { id: '7', name: 'Handyman', icon: Briefcase, openings: 11, color: 'text-orange-600' },
-];
-
-const FEATURED_SERVICES = [
-    {
-        id: '1',
-        type: 'Full-time',
-        postedAgo: '2 days ago',
-        title: 'Home Deep Cleaning',
-        priceRange: 'Ksh 2,500 - 4,000',
-        location: 'Westlands',
-        category: 'Cleaning',
-        providerImage: 'https://images.unsplash.com/photo-1581578731117-104f2a8060a7?w=100&q=80',
-        providerColor: 'bg-purple-100',
-    },
-    {
-        id: '2',
-        type: 'Contract',
-        postedAgo: '1 day ago',
-        title: 'Electrical Repairs',
-        priceRange: 'Ksh 1,500 - 3,000',
-        location: 'Kilimani',
-        category: 'Electrical',
-        providerImage: 'https://images.unsplash.com/photo-1621905251189-08b45d6a269e?w=100&q=80',
-        providerColor: 'bg-amber-100',
-    },
-    {
-        id: '3',
-        type: 'One-time',
-        postedAgo: '3 hours ago',
-        title: 'Plumbing Services',
-        priceRange: 'Ksh 1,000 - 2,500',
-        location: 'Karen',
-        category: 'Plumbing',
-        providerImage: 'https://images.unsplash.com/photo-1504328345606-18bbc8c9d7d1?w=100&q=80',
-        providerColor: 'bg-blue-100',
-    },
-];
-
-const TOP_PROVIDERS = [
-    {
-        id: '1',
-        name: 'CleanPro Services',
-        type: 'Full-time',
-        role: 'Home Cleaning',
-        location: 'Westlands, Nairobi',
-        rating: 4.9,
-        logo: 'https://images.unsplash.com/photo-1560179707-f14e90ef3623?w=100&h=100&fit=crop',
-        bgColor: 'bg-emerald-50',
-    },
-    {
-        id: '2',
-        name: 'TechFix Kenya',
-        type: 'Contract',
-        role: 'IT Support',
-        location: 'CBD, Nairobi',
-        rating: 4.8,
-        logo: 'https://images.unsplash.com/photo-1549924231-f129b911e442?w=100&h=100&fit=crop',
-        bgColor: 'bg-rose-50',
-    },
-    {
-        id: '3',
-        name: 'SparkElectric',
-        type: 'Full-time',
-        role: 'Electrical Work',
-        location: 'Kilimani, Nairobi',
-        rating: 4.7,
-        logo: 'https://images.unsplash.com/photo-1572021335469-31706a17ber7?w=100&h=100&fit=crop',
-        bgColor: 'bg-amber-50',
-    },
-    {
-        id: '4',
-        name: 'MoveIt Movers',
-        type: 'Contract',
-        role: 'Moving Services',
-        location: 'Industrial Area',
-        rating: 4.6,
-        logo: 'https://images.unsplash.com/photo-1600880292203-757bb62b4baf?w=100&h=100&fit=crop',
-        bgColor: 'bg-blue-50',
-    },
-];
 
 export default function HomePage() {
     const navigate = useNavigate();
@@ -175,8 +91,8 @@ export default function HomePage() {
                             <button
                                 onClick={() => setActiveTab('latest')}
                                 className={`px-4 py-2 text-sm font-medium rounded-full transition-colors ${activeTab === 'latest'
-                                        ? 'bg-brand-green text-white shadow-sm'
-                                        : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
+                                    ? 'bg-brand-green text-white shadow-sm'
+                                    : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
                                     }`}
                             >
                                 Latest
@@ -184,8 +100,8 @@ export default function HomePage() {
                             <button
                                 onClick={() => setActiveTab('premium')}
                                 className={`px-4 py-2 text-sm font-medium rounded-full transition-colors ${activeTab === 'premium'
-                                        ? 'bg-brand-green text-white shadow-sm'
-                                        : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
+                                    ? 'bg-brand-green text-white shadow-sm'
+                                    : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
                                     }`}
                             >
                                 Premium
@@ -208,8 +124,8 @@ export default function HomePage() {
                                                 navigate(`/search?category=${category.name}`);
                                             }}
                                             className={`w-full flex items-center justify-between p-3 rounded-xl transition-all ${selectedCategory === category.id
-                                                    ? 'bg-brand-light border border-brand-green/20'
-                                                    : 'hover:bg-slate-50'
+                                                ? 'bg-brand-light border border-brand-green/20'
+                                                : 'hover:bg-slate-50'
                                                 }`}
                                         >
                                             <div className="flex items-center gap-3">
@@ -331,8 +247,8 @@ export default function HomePage() {
                                     {/* Type Badge */}
                                     <div className="flex items-center justify-between mb-4">
                                         <span className={`text-xs font-medium px-3 py-1 rounded-full ${provider.type === 'Full-time'
-                                                ? 'bg-emerald-100 text-emerald-700'
-                                                : 'bg-amber-100 text-amber-700'
+                                            ? 'bg-emerald-100 text-emerald-700'
+                                            : 'bg-amber-100 text-amber-700'
                                             }`}>
                                             {provider.type}
                                         </span>
@@ -361,8 +277,8 @@ export default function HomePage() {
                                             <Star
                                                 key={i}
                                                 className={`h-4 w-4 ${i < Math.floor(provider.rating)
-                                                        ? 'text-amber-400 fill-amber-400'
-                                                        : 'text-slate-200'
+                                                    ? 'text-amber-400 fill-amber-400'
+                                                    : 'text-slate-200'
                                                     }`}
                                             />
                                         ))}

@@ -4,6 +4,7 @@ import { ChevronLeft, MapPin, CheckCircle2, CreditCard } from 'lucide-react';
 import { Button } from '../components/ui/Button';
 import { Input } from '../components/ui/Input';
 import { Card } from '../components/ui/Card';
+import { BOOKING_SERVICES } from '../data/services';
 
 export default function BookingFlowPage() {
     const navigate = useNavigate();
@@ -15,11 +16,7 @@ export default function BookingFlowPage() {
     const [isSuccess, setIsSuccess] = useState(false);
 
     // Mock Data
-    const services = [
-        { id: 's1', name: 'Socket Repair/Install', price: 800 },
-        { id: 's2', name: 'Full Wiring Audit', price: 2500 },
-        { id: 's3', name: 'Emergency Fix', price: 1500 },
-    ];
+    const services = BOOKING_SERVICES;
     const initialService = services.find(s => s.id === searchParams.get('service')) || services[0];
     const [selectedService, setSelectedService] = useState(initialService);
     const [date, setDate] = useState('');
