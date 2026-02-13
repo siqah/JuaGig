@@ -2,33 +2,14 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { ChevronLeft, Share2, Star, MapPin, ShieldCheck, Clock } from 'lucide-react';
 import { Button } from '../components/ui/Button';
 import { Card } from '../components/ui/Card';
+import { MOCK_PROVIDER } from '../data/providers';
 
 export default function ProviderProfilePage() {
     const { providerId } = useParams();
     const navigate = useNavigate();
 
     // Mock data - normally fetched by ID
-    const provider = {
-        id: providerId || '1',
-        name: 'Brian Otieno',
-        role: 'Electrician',
-        rating: 4.8,
-        reviews: 127,
-        jobs: 312,
-        location: 'Kilimani, Nairobi',
-        about: 'NITA certified electrician with 5 years of experience. Specialist in domestic wiring, socket repairs, and safety inspections. I promise clean work and punctuality.',
-        image: 'https://images.unsplash.com/photo-1633332755192-727a05c4013d?w=800&h=800&fit=crop',
-        verified: true,
-        services: [
-            { id: 's1', name: 'Socket Repair/Install', price: 'KSh 800', duration: '1h' },
-            { id: 's2', name: 'Full Wiring Audit', price: 'KSh 2,500', duration: '3h' },
-            { id: 's3', name: 'Emergency Fix', price: 'KSh 1,500', duration: '1h' },
-        ],
-        gallery: [
-            'https://images.unsplash.com/photo-1621905251189-08b45d6a269e?w=400&h=300&fit=crop',
-            'https://images.unsplash.com/photo-1544724569-5f546fd6dd2d?w=400&h=300&fit=crop',
-        ]
-    };
+    const provider = { ...MOCK_PROVIDER, id: providerId || MOCK_PROVIDER.id };
 
     return (
         <div className="min-h-screen bg-white pb-24">
